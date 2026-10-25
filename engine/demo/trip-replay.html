@@ -1,0 +1,235 @@
+<title>Backseat Driver Trip Replay</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an in-dash nav screen. Report card on top, map with heat on the left, transcript on the right. */
+:root {
+  --bg: #eef0ee;
+  --panel: #ffffff;
+  --ink: #1d2320;
+  --muted: #5d6762;
+  --line: #d5dad7;
+  --road: #9aa4a0;
+  --sign: #ffffff;
+  --sign-ink: #111;
+  --heat: 214, 54, 32;
+  --nav: #1f6f5c;
+  --roast: #b8361f;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141816; --panel: #1c211f; --ink: #e6ebe8; --muted: #94a09a; --line: #2e3532;
+    --road: #56605b; --sign: #f4f4f0; --sign-ink: #111; --heat: 255, 96, 64; --nav: #58c3a6; --roast: #ff7b5f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141816; --panel: #1c211f; --ink: #e6ebe8; --muted: #94a09a; --line: #2e3532;
+  --road: #56605b; --sign: #f4f4f0; --sign-ink: #111; --heat: 255, 96, 64; --nav: #58c3a6; --roast: #ff7b5f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 40px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+header h1 { font: 800 clamp(30px, 5vw, 44px)/1 var(--display); letter-spacing: .01em; margin: 0; text-transform: uppercase; text-wrap: balance; }
+header p { margin: 6px 0 0; color: var(--muted); max-width: 65ch; }
+
+.report { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.sign { width: 112px; background: var(--sign); color: var(--sign-ink); border: 3px solid var(--sign-ink); outline: 3px solid var(--sign); border-radius: 8px; text-align: center; padding: 8px 6px 4px; font-family: var(--display); }
+.sign small { display: block; font-weight: 800; font-size: 15px; letter-spacing: .06em; line-height: 1.05; }
+.sign b { display: block; font-weight: 800; font-size: 64px; line-height: 1; }
+.scores { display: grid; gap: 10px; min-width: 0; }
+.quip { font-size: 17px; font-weight: 500; margin: 0; }
+.parts { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.part { min-width: 0; }
+.part h3 { margin: 0; font: 600 13px var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.part .val { font: 800 26px/1.1 var(--display); }
+.part .sub { color: var(--muted); font-size: 13px; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; align-items: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.card h2 { margin: 0 0 10px; font: 800 20px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+#map { width: 100%; aspect-ratio: 4 / 5; max-width: 100%; display: block; border-radius: 6px; background: var(--bg); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; color: var(--muted); font-size: 13px; align-items: center; }
+.ramp { width: 90px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgba(var(--heat), .1), rgba(var(--heat), 1)); }
+.shame { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; font-size: 13px; }
+.shame li { display: grid; grid-template-columns: 3.2em 1fr; gap: 8px; }
+.shame .w { font-family: var(--mono); color: var(--roast); font-variant-numeric: tabular-nums; }
+
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 720px; overflow-y: auto; }
+.log li button { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 3.4em 3.6em 1fr; gap: 10px; width: 100%; padding: 8px 8px; border-radius: 6px; }
+.log li button:hover, .log li button[aria-pressed="true"] { background: var(--bg); }
+.log li button:focus-visible { outline: 2px solid var(--nav); }
+.t { font: 13px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.tag { font: 600 11px var(--body); letter-spacing: .08em; text-transform: uppercase; padding-top: 4px; }
+.tag.nav { color: var(--nav); } .tag.roast { color: var(--roast); }
+.txt { min-width: 0; }
+.mad { display: block; height: 4px; margin-top: 6px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.mad i { display: block; height: 100%; background: var(--roast); }
+.note { padding: 10px 8px 2px; color: var(--muted); font-style: italic; font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; }
+
+@media (max-width: 760px) {
+  .main { grid-template-columns: 1fr; }
+  .report { grid-template-columns: 1fr; justify-items: start; }
+  .log { max-height: none; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Trip replay</h1>
+    <p>A simulated 7 minute drive run through the Backseat Driver critique engine. Every line below is what the GPS would say out loud. Tap a line to see where it happened.</p>
+  </header>
+
+  <section class="report" aria-label="Trip grade">
+    <div class="sign" aria-label="Overall grade"><small>TRIP<br>GRADE</small><b id="g-letter">F</b></div>
+    <div class="scores">
+      <p class="quip" id="g-quip"></p>
+      <div class="parts">
+        <div class="part"><h3>Following directions</h3><div class="val" id="g-instr"></div><div class="sub" id="g-instr-sub"></div></div>
+        <div class="part"><h3>Driving</h3><div class="val" id="g-drive"></div><div class="sub" id="g-drive-sub"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+    <section class="card">
+      <h2>Where you went wrong</h2>
+      <canvas id="map" aria-label="Route with heat map of driving mistakes"></canvas>
+      <div class="legend"><span>Fewer mistakes</span><span class="ramp"></span><span>More</span></div>
+      <ol class="shame" id="shame"></ol>
+    </section>
+    <section class="card">
+      <h2>What the GPS said</h2>
+      <ol class="log" id="log"></ol>
+    </section>
+  </div>
+  <footer>Sample data from <code>sim/drive.ts</code>, seed 7. The heat map uses the engine's incident log; in the real app it sits on top of the street map.</footer>
+</div>
+
+<script>
+const DATA = {"track":[[-104.9903,39.7392],[-104.9903,39.739212],[-104.9903,39.739236],[-104.9903,39.739272],[-104.9903,39.73932],[-104.9903,39.739381],[-104.9903,39.739453],[-104.9903,39.739537],[-104.9903,39.739634],[-104.9903,39.739742],[-104.9903,39.739863],[-104.9903,39.739989],[-104.9903,39.74012],[-104.9903,39.740258],[-104.9903,39.740401],[-104.9903,39.740549],[-104.9903,39.740704],[-104.9903,39.740863],[-104.9903,39.741029],[-104.9903,39.7412],[-104.9903,39.741377],[-104.9903,39.741559],[-104.9903,39.741747],[-104.9903,39.74194],[-104.9903,39.74214],[-104.9903,39.742344],[-104.9903,39.742549],[-104.9903,39.742754],[-104.9903,39.742959],[-104.9903,39.743164],[-104.9903,39.743368],[-104.9903,39.743573],[-104.9903,39.743778],[-104.9903,39.743983],[-104.9903,39.744188],[-104.9903,39.744392],[-104.9903,39.744597],[-104.9903,39.744802],[-104.9903,39.745007],[-104.9903,39.745212],[-104.9903,39.745416],[-104.9903,39.745621],[-104.9903,39.745826],[-104.9903,39.746031],[-104.9903,39.746236],[-104.9903,39.746441],[-104.9903,39.746645],[-104.9903,39.74685],[-104.9903,39.747055],[-104.9903,39.74726],[-104.9903,39.747465],[-104.9903,39.747675],[-104.9903,39.747892],[-104.9903,39.748115],[-104.9903,39.748344],[-104.9903,39.748573],[-104.9903,39.748802],[-104.9903,39.749031],[-104.9903,39.74926],[-104.9903,39.749489],[-104.9903,39.749717],[-104.9903,39.749946],[-104.9903,39.750175],[-104.9903,39.75041],[-104.9903,39.750651],[-104.9903,39.750898],[-104.9903,39.751151],[-104.9903,39.751404],[-104.9903,39.751657],[-104.9903,39.75191],[-104.9903,39.752163],[-104.9903,39.752416],[-104.9903,39.752669],[-104.9903,39.752922],[-104.9903,39.753175],[-104.9903,39.753428],[-104.9903,39.753681],[-104.9903,39.753927],[-104.9903,39.754167],[-104.9903,39.754401],[-104.9903,39.754628],[-104.9903,39.754848],[-104.9903,39.755062],[-104.9903,39.755269],[-104.9903,39.75547],[-104.9903,39.755671],[-104.9903,39.755872],[-104.9903,39.756072],[-104.9903,39.756273],[-104.9903,39.756474],[-104.9903,39.756675],[-104.9903,39.756876],[-104.9903,39.757076],[-104.9903,39.757277],[-104.9903,39.757478],[-104.9903,39.757679],[-104.9903,39.75788],[-104.9903,39.75808],[-104.9903,39.758281],[-104.9903,39.758482],[-104.9903,39.758683],[-104.9903,39.758883],[-104.9903,39.759084],[-104.9903,39.759285],[-104.9903,39.759486],[-104.9903,39.75962],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.759687],[-104.9903,39.75972],[-104.9903,39.759787],[-104.9903,39.759887],[-104.990169,39.759887],[-104.990039,39.759887],[-104.989908,39.759887],[-104.989778,39.759887],[-104.989647,39.759887],[-104.989516,39.759887],[-104.989386,39.759887],[-104.989255,39.759887],[-104.989125,39.759887],[-104.988994,39.759887],[-104.988863,39.759887],[-104.988733,39.759887],[-104.988602,39.759887],[-104.988472,39.759887],[-104.988341,39.759887],[-104.98821,39.759887],[-104.98808,39.759887],[-104.987949,39.759887],[-104.987819,39.759887],[-104.987688,39.759887],[-104.987557,39.759887],[-104.987427,39.759887],[-104.987296,39.759887],[-104.987166,39.759887],[-104.987035,39.759887],[-104.986904,39.759887],[-104.986774,39.759887],[-104.986643,39.759887],[-104.986513,39.759887],[-104.986382,39.759887],[-104.986238,39.759887],[-104.986082,39.759887],[-104.985912,39.759887],[-104.985729,39.759887],[-104.985533,39.759887],[-104.985324,39.759887],[-104.985143,39.759887],[-104.98499,39.759887],[-104.984864,39.759887],[-104.984767,39.759887],[-104.984697,39.759887],[-104.984656,39.759887],[-104.984614,39.759887],[-104.984572,39.759887],[-104.98453,39.759887],[-104.984488,39.759887],[-104.984447,39.759887],[-104.984405,39.759887],[-104.984363,39.759887],[-104.984321,39.759887],[-104.984279,39.759887],[-104.984238,39.759887],[-104.984196,39.759887],[-104.984154,39.759887],[-104.984112,39.759887],[-104.98407,39.759887],[-104.984029,39.759887],[-104.983987,39.759887],[-104.983945,39.759887],[-104.983903,39.759887],[-104.983861,39.759887],[-104.98382,39.759887],[-104.983778,39.759887],[-104.983736,39.759887],[-104.983694,39.759887],[-104.983653,39.759887],[-104.983611,39.759887],[-104.983569,39.759887],[-104.983527,39.759887],[-104.983485,39.759887],[-104.983444,39.759887],[-104.983402,39.759887],[-104.98336,39.759887],[-104.983318,39.759887],[-104.983276,39.759887],[-104.983235,39.759887],[-104.983193,39.759887],[-104.983151,39.759887],[-104.983109,39.759887],[-104.983067,39.759887],[-104.983026,39.759887],[-104.982984,39.759887],[-104.982942,39.759887],[-104.9829,39.759887],[-104.982858,39.759887],[-104.982817,39.759887],[-104.982775,39.759887],[-104.982733,39.759887],[-104.982691,39.759887],[-104.98265,39.759887],[-104.982608,39.759887],[-104.982566,39.759887],[-104.982535,39.759887],[-104.982514,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982503,39.759887],[-104.982491,39.759887],[-104.982467,39.759887],[-104.98243,39.759887],[-104.982381,39.759887],[-104.98232,39.759887],[-104.982247,39.759887],[-104.982162,39.759887],[-104.982064,39.759887],[-104.981955,39.759887],[-104.981833,39.759887],[-104.981699,39.759887],[-104.981553,39.759887],[-104.981394,39.759887],[-104.981223,39.759887],[-104.981041,39.759887],[-104.980858,39.759887],[-104.980675,39.759887],[-104.980492,39.759887],[-104.980309,39.759887],[-104.980126,39.759887],[-104.979944,39.759887],[-104.979761,39.759887],[-104.979578,39.759887],[-104.979395,39.759887],[-104.979212,39.759887],[-104.979029,39.759887],[-104.978847,39.759887],[-104.978664,39.759887],[-104.978481,39.759887],[-104.978298,39.759887],[-104.978115,39.759887],[-104.977932,39.759887],[-104.977749,39.759887],[-104.977567,39.759887],[-104.977384,39.759887],[-104.977201,39.759887],[-104.977018,39.759887],[-104.976835,39.759887],[-104.976652,39.759887],[-104.97647,39.759887],[-104.97647,39.759747],[-104.97647,39.759606],[-104.97647,39.759466],[-104.97647,39.759325],[-104.97647,39.759185],[-104.97647,39.759044],[-104.97647,39.758904],[-104.97647,39.758763],[-104.97647,39.758622],[-104.97647,39.758482],[-104.97647,39.758341],[-104.97647,39.758201],[-104.97647,39.75806],[-104.97647,39.75792],[-104.97647,39.757779],[-104.97647,39.757639],[-104.97647,39.757498],[-104.97647,39.757357],[-104.97647,39.757217],[-104.97647,39.757076],[-104.976287,39.757076],[-104.976104,39.757076],[-104.975921,39.757076],[-104.975738,39.757076],[-104.975555,39.757076],[-104.975373,39.757076],[-104.97519,39.757076],[-104.975007,39.757076],[-104.974824,39.757076],[-104.974641,39.757076],[-104.974458,39.757076],[-104.974276,39.757076],[-104.974093,39.757076],[-104.97391,39.757076],[-104.973727,39.757076],[-104.973544,39.757076],[-104.973361,39.757076],[-104.973179,39.757076],[-104.972996,39.757076],[-104.972813,39.757076],[-104.972648,39.757076],[-104.972502,39.757076],[-104.972374,39.757076],[-104.972265,39.757076],[-104.972173,39.757076],[-104.9721,39.757076],[-104.972045,39.757076],[-104.972009,39.757076],[-104.97199,39.757076],[-104.97199,39.757076]],"log":[{"t":0,"c":{"t":0,"category":"instruction","text":"Okay, here's the plan. First you're going to turn right, then left, then left again, and right. Once you've done all that, you'll have made it to your destination. It's all so simple. You got it?","frustration":0,"priority":"nav","voice":{"speed":1}}},{"t":0,"c":{"t":0,"category":"instruction","text":"In 500 feet, head north on Main Street.","frustration":0,"priority":"nav","voice":{"speed":1}}},{"t":0,"note":"pulling out"},{"t":10000,"note":"onto a 50 zone, creeping to 51"},{"t":25000,"c":{"t":25000,"category":"speeding","text":"The limit is 50. Not 50-ish. 50.","frustration":6,"priority":"roast","voice":{"speed":1.02}}},{"t":45000,"c":{"t":45000,"category":"speeding","text":"Still 51. Still 50. Still disappointed.","frustration":10,"priority":"roast","voice":{"speed":1.04}}},{"t":50000,"note":"getting comfortable"},{"t":52000,"c":{"t":52000,"category":"speeding","text":"We're doing 4 over. Just so it's on the record.","frustration":15,"priority":"roast","voice":{"speed":1.06}}},{"t":62000,"note":"full send"},{"t":64000,"c":{"t":64000,"category":"speeding","text":"60 in a 50. I'm going to pretend I didn't see that. I did, though.","frustration":20,"priority":"roast","voice":{"speed":1.08}}},{"t":84000,"c":{"t":84000,"category":"instruction","text":"Okay, listen carefully. In 1000 feet, turn right onto Oak Avenue. Shouldn't be hard.","frustration":18,"priority":"nav","voice":{"speed":1.07}}},{"t":91000,"c":{"t":91000,"category":"instruction","text":"Reminder: right. In 500 feet. Thought you might need that.","frustration":17,"priority":"nav","voice":{"speed":1.07}}},{"t":97000,"c":{"t":97000,"category":"instruction","text":"50 feet. Turning right. Any second now.","frustration":17,"priority":"nav","voice":{"speed":1.07}}},{"t":98000,"c":{"t":98000,"category":"instruction","text":"You are turning right.","frustration":17,"priority":"nav","voice":{"speed":1.07}}},{"t":102000,"c":{"t":102000,"category":"instruction","text":"You are still turning right.","frustration":16,"priority":"nav","voice":{"speed":1.07}}},{"t":104000,"note":"sails past Oak Ave"},{"t":104000,"c":{"t":104000,"category":"missedTurn","text":"I told you 1000 feet in advance. 1000 feet! That's practically a reservation.","frustration":34,"priority":"roast","voice":{"speed":1.14}}},{"t":104000,"c":{"t":104000,"category":"rerouted","text":"I've rerouted more times today than a lost airport bag.","frustration":40,"priority":"roast","voice":{"speed":1.16}}},{"t":104000,"c":{"t":104000,"category":"instruction","text":"Let's try this again. In 650 feet, turn right onto Pine Street. You can do it. Maybe.","frustration":40,"priority":"nav","voice":{"speed":1.16}}},{"t":104000,"note":"brake-checks the car behind for a yellow light"},{"t":105000,"c":{"t":105000,"category":"hardBraking","text":"My entire database just slid forward. Thanks.","frustration":48,"priority":"roast","voice":{"speed":1.19}}},{"t":107000,"note":"sitting at the light"},{"t":152000,"c":{"t":152000,"category":"longStop","text":"Stopped again. This is stop number 1. I'm keeping a list.","frustration":46,"priority":"roast","voice":{"speed":1.19}}},{"t":157000,"note":"jackrabbit start"},{"t":158000,"c":{"t":158000,"category":"hardAccel","text":"You launched off that like it was a drag strip. It's a Trader Joe's parking lot.","frustration":52,"priority":"roast","voice":{"speed":1.21}}},{"t":160000,"note":"swings onto Pine at the last second"},{"t":160000,"c":{"t":160000,"category":"turnCompleted","text":"That was less of a turn and more of a last-minute life decision.","frustration":47,"priority":"roast","voice":{"speed":1.19}}},{"t":160000,"note":"dawdling at 25 in a 45"},{"t":178000,"c":{"t":178000,"category":"tooSlow","text":"A man on a bicycle just passed us. He waved. It was a pity wave.","frustration":50,"priority":"roast","voice":{"speed":1.2}}},{"t":196000,"note":"hits morning traffic"},{"t":196000,"c":{"t":196000,"category":"traffic","text":"Welcome to the parking lot you chose. Colfax Avenue sends its regards.","frustration":51,"priority":"roast","voice":{"speed":1.2}}},{"t":226000,"c":{"t":226000,"category":"traffic","text":"Colfax Avenue is moving at full speed right now. I checked. I keep checking. It hurts.","frustration":51,"priority":"roast","voice":{"speed":1.2}}},{"t":256000,"note":"fully stopped in traffic"},{"t":301000,"c":{"t":301000,"category":"traffic","text":"I said Colfax Avenue. I said it clearly. I have a very clear voice. It's literally my only feature.","frustration":46,"priority":"roast","voice":{"speed":1.19}}},{"t":321000,"note":"traffic clears"},{"t":331000,"c":{"t":331000,"category":"instruction","text":"Pay attention this time. In 800 feet, turn left onto Elm Street. The other left, if it says left.","frustration":43,"priority":"nav","voice":{"speed":1.17}}},{"t":338000,"c":{"t":338000,"category":"instruction","text":"Still left. Still 500 feet. Just checking you're awake.","frustration":43,"priority":"nav","voice":{"speed":1.17}}},{"t":346000,"note":"turns right onto Elm instead"},{"t":347000,"c":{"t":347000,"category":"instruction","text":"Turn left. This one. THIS one.","frustration":42,"priority":"nav","voice":{"speed":1.17}}},{"t":347000,"c":{"t":347000,"category":"wrongTurn","text":"LEFT. The OTHER left. The one you didn't pick.","frustration":60,"priority":"roast","voice":{"speed":1.24}}},{"t":356000,"c":{"t":356000,"category":"rerouted","text":"Recalculating. You know what's hard to recalculate? My faith in you.","frustration":65,"priority":"roast","voice":{"speed":1.26}}},{"t":356000,"c":{"t":356000,"category":"instruction","text":"Slowly, for you: In 500 feet, turn left onto 2nd Avenue. Signal, please. You own a blinker.","frustration":65,"priority":"nav","voice":{"speed":1.26}}},{"t":356000,"c":{"t":356000,"category":"payback","text":"I could have found you a light. I chose not to. Remember your little left-right mix-up? I do.","frustration":65,"priority":"roast","voice":{"speed":1.26}}},{"t":365000,"c":{"t":365000,"category":"instruction","text":"50 feet! Turn left! Blinker!","frustration":64,"priority":"nav","voice":{"speed":1.26}}},{"t":366000,"c":{"t":366000,"category":"instruction","text":"You are turning left. Now. This is the turn.","frustration":64,"priority":"nav","voice":{"speed":1.26}}},{"t":366000,"note":"nails the turn"},{"t":366000,"c":{"t":366000,"category":"turnCompleted","text":"Look at you, following instructions like a person who has seen a road before.","frustration":60,"priority":"roast","voice":{"speed":1.24}}},{"t":372000,"c":{"t":372000,"category":"speeding","text":"35? The sign said 30. It was a big sign. It was white.","frustration":65,"priority":"roast","voice":{"speed":1.26}}},{"t":386000,"note":"pulling into the driveway"},{"t":396000,"c":{"t":396000,"category":"arrived","text":"Destination reached. I need a minute. Maybe a factory reset. Grade: F.","frustration":63,"priority":"nav","voice":{"speed":1.25}}}],"report":{"overall":{"score":46,"letter":"F","quip":"An F. I'd write more, but the heat map says it all."},"instructions":{"score":40,"letter":"F","onTime":1,"late":1,"missed":1,"wrongWay":1,"reroutes":2},"driving":{"score":57,"letter":"F","speedingSeconds":78,"maxOverLimit":13,"hardBrakes":1,"hardAccels":1},"heatmap":{"cells":[{"lat":39.759365,"lon":-104.989955,"weight":9.5,"count":4,"kinds":{"missedTurn":1,"rerouted":1,"hardBraking":1,"longStop":1}},{"lat":39.760039,"lon":-104.97633,"weight":5,"count":1,"kinds":{"wrongTurn":1}},{"lat":39.751954,"lon":-104.990186,"weight":4.33,"count":1,"kinds":{"speeding":1}},{"lat":39.753301,"lon":-104.990361,"weight":4.33,"count":1,"kinds":{"speeding":1}},{"lat":39.760039,"lon":-104.990312,"weight":4,"count":2,"kinds":{"hardAccel":1,"lateTurn":1}},{"lat":39.750606,"lon":-104.99001,"weight":3.67,"count":1,"kinds":{"speeding":1}},{"lat":39.748585,"lon":-104.989972,"weight":2.33,"count":1,"kinds":{"speeding":1}},{"lat":39.749933,"lon":-104.989964,"weight":2.33,"count":1,"kinds":{"speeding":1}},{"lat":39.754649,"lon":-104.990437,"weight":2,"count":1,"kinds":{"speeding":1}},{"lat":39.757344,"lon":-104.976642,"weight":1.67,"count":1,"kinds":{"speeding":1}},{"lat":39.757344,"lon":-104.975765,"weight":1.67,"count":1,"kinds":{"speeding":1}},{"lat":39.757344,"lon":-104.974889,"weight":1.67,"count":1,"kinds":{"speeding":1}},{"lat":39.757344,"lon":-104.973136,"weight":1.67,"count":1,"kinds":{"speeding":1}},{"lat":39.742522,"lon":-104.99012,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.743195,"lon":-104.989928,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.744543,"lon":-104.990612,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.745216,"lon":-104.99042,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.746564,"lon":-104.990227,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.747238,"lon":-104.990035,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.758691,"lon":-104.976155,"weight":1,"count":1,"kinds":{"rerouted":1}},{"lat":39.757344,"lon":-104.97226,"weight":1,"count":1,"kinds":{"speeding":1}},{"lat":39.760039,"lon":-104.987938,"weight":0.5,"count":1,"kinds":{"tooSlow":1}},{"lat":39.760039,"lon":-104.985309,"weight":0.5,"count":1,"kinds":{"traffic":1}},{"lat":39.760039,"lon":-104.983556,"weight":0.5,"count":1,"kinds":{"traffic":1}},{"lat":39.760039,"lon":-104.98268,"weight":0.5,"count":1,"kinds":{"traffic":1}}],"geojson":{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.742344379446635]},"properties":{"weight":1,"kind":"speeding","t":25000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.7433684110672]},"properties":{"weight":1,"kind":"speeding","t":30000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.74439244268777]},"properties":{"weight":1,"kind":"speeding","t":35000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.745416474308335]},"properties":{"weight":1,"kind":"speeding","t":40000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.7464405059289]},"properties":{"weight":1,"kind":"speeding","t":45000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.74746453754947]},"properties":{"weight":1,"kind":"speeding","t":50000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.74857290118584]},"properties":{"weight":2.33,"kind":"speeding","t":55000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.749717407114694]},"properties":{"weight":2.33,"kind":"speeding","t":60000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75089805533604]},"properties":{"weight":3.67,"kind":"speeding","t":65000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75216303557318]},"properties":{"weight":4.33,"kind":"speeding","t":70000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75342801581033]},"properties":{"weight":4.33,"kind":"speeding","t":75000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.754627739130484]},"properties":{"weight":2,"kind":"speeding","t":80000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75948586561276]},"properties":{"weight":5,"kind":"missedTurn","t":104000,"detail":"Turn right onto Oak Avenue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75948586561276]},"properties":{"weight":1,"kind":"rerouted","t":104000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75961972595532]},"properties":{"weight":3,"kind":"hardBraking","t":105000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.7596866561266]},"properties":{"weight":0.5,"kind":"longStop","t":152000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75972012121223]},"properties":{"weight":2,"kind":"hardAccel","t":158000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9903,39.75988744664043]},"properties":{"weight":2,"kind":"lateTurn","t":160000,"detail":"Turn right onto Pine Street"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.98794922513692,39.75988744664043]},"properties":{"weight":0.5,"kind":"tooSlow","t":178000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.98532419320655,39.75988744664043]},"properties":{"weight":0.5,"kind":"traffic","t":196000,"detail":"Colfax Avenue"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.98365253108186,39.75988744664043]},"properties":{"weight":0.5,"kind":"traffic","t":226000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.98250326337116,39.75988744664043]},"properties":{"weight":0.5,"kind":"traffic","t":301000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.97646960788967,39.75974689328074]},"properties":{"weight":5,"kind":"wrongTurn","t":347000,"detail":"Turn left onto Elm Street"}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.97646960788967,39.758481913043575]},"properties":{"weight":1,"kind":"rerouted","t":356000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.97628677730752,39.75707637944672]},"properties":{"weight":1.67,"kind":"speeding","t":367000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.97537262439678,39.75707637944672]},"properties":{"weight":1.67,"kind":"speeding","t":372000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.97445847148605,39.75707637944672]},"properties":{"weight":1.67,"kind":"speeding","t":377000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9735443185753,39.75707637944672]},"properties":{"weight":1.67,"kind":"speeding","t":382000}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-104.9726484487228,39.75707637944672]},"properties":{"weight":1,"kind":"speeding","t":387000}}]}}}};
+const LABEL = { speeding: "speeding", tooSlow: "dawdling", traffic: "sat in traffic", hardBraking: "hard brake", hardAccel: "jackrabbit start", longStop: "long stop", missedTurn: "missed turn", wrongTurn: "wrong-way turn", lateTurn: "late turn", rerouted: "reroute" };
+const r = DATA.report;
+const $ = (id) => document.getElementById(id);
+const clock = (ms) => { const s = Math.floor(ms / 1000); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+
+$("g-letter").textContent = r.overall.letter;
+$("g-quip").textContent = r.overall.quip;
+$("g-instr").textContent = `${r.instructions.letter} · ${r.instructions.score}`;
+$("g-instr-sub").textContent = `${r.instructions.onTime} on time, ${r.instructions.late} late, ${r.instructions.missed} missed, ${r.instructions.wrongWay} wrong way, ${r.instructions.reroutes} reroute${r.instructions.reroutes === 1 ? "" : "s"}`;
+$("g-drive").textContent = `${r.driving.letter} · ${r.driving.score}`;
+$("g-drive-sub").textContent = `${r.driving.speedingSeconds}s speeding (worst +${r.driving.maxOverLimit} mph), ${r.driving.hardBrakes} hard brake${r.driving.hardBrakes === 1 ? "" : "s"}, ${r.driving.hardAccels} jackrabbit start${r.driving.hardAccels === 1 ? "" : "s"}`;
+
+const tracks = DATA.track;
+const pointAt = (t) => tracks[Math.min(tracks.length - 1, Math.round(t / 1000))];
+
+// Hall of shame
+const shame = $("shame");
+r.heatmap.cells.slice(0, 4).forEach((c) => {
+  const li = document.createElement("li");
+  const kinds = Object.entries(c.kinds).map(([k, n]) => (n > 1 ? `${LABEL[k]} ×${n}` : LABEL[k])).join(", ");
+  li.innerHTML = `<span class="w">${c.weight.toFixed(1)}</span><span></span>`;
+  li.lastChild.textContent = kinds;
+  shame.appendChild(li);
+});
+
+// Map
+const canvas = $("map");
+let selected = null;
+function draw() {
+  const css = getComputedStyle(document.documentElement);
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const lons = tracks.map((p) => p[0]), lats = tracks.map((p) => p[1]);
+  const minLon = Math.min(...lons), maxLon = Math.max(...lons), minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const kx = Math.cos((minLat * Math.PI) / 180);
+  const spanX = Math.max((maxLon - minLon) * kx, 1e-4), spanY = Math.max(maxLat - minLat, 1e-4);
+  const pad = 36;
+  const s = Math.min((w - pad * 2) / spanX, (h - pad * 2) / spanY);
+  const ox = (w - spanX * s) / 2, oy = (h - spanY * s) / 2;
+  const xy = ([lon, lat]) => [ox + (lon - minLon) * kx * s, h - (oy + (lat - minLat) * s)];
+
+  // Road
+  ctx.lineCap = ctx.lineJoin = "round";
+  ctx.strokeStyle = css.getPropertyValue("--road").trim();
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  tracks.forEach((p, i) => { const [x, y] = xy(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+  ctx.stroke();
+
+  // Heat
+  const heat = css.getPropertyValue("--heat").trim();
+  const maxW = Math.max(...r.heatmap.geojson.features.map((f) => f.properties.weight));
+  r.heatmap.geojson.features.forEach((f) => {
+    const [x, y] = xy(f.geometry.coordinates);
+    const k = f.properties.weight / maxW;
+    const rad = 18 + 34 * k;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+    g.addColorStop(0, `rgba(${heat}, ${0.25 + 0.55 * k})`);
+    g.addColorStop(1, `rgba(${heat}, 0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Start / end
+  const ink = css.getPropertyValue("--ink").trim(), panel = css.getPropertyValue("--panel").trim();
+  ctx.font = `600 12px ${css.getPropertyValue("--body")}`;
+  [[tracks[0], "Start"], [tracks[tracks.length - 1], "Arrived"]].forEach(([p, label]) => {
+    const [x, y] = xy(p);
+    ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = ink; ctx.fillText(label, x + 10, y + 4);
+  });
+
+  // Selected line
+  if (selected !== null) {
+    const [x, y] = xy(pointAt(selected));
+    ctx.fillStyle = css.getPropertyValue("--nav").trim();
+    ctx.strokeStyle = panel; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  }
+}
+
+// Transcript
+const log = $("log");
+DATA.log.forEach((e) => {
+  const li = document.createElement("li");
+  if (e.note) { li.className = "note"; li.textContent = `${clock(e.t)} · ${e.note}`; log.appendChild(li); return; }
+  const c = e.c;
+  li.innerHTML = `<button type="button" aria-pressed="false"><span class="t"></span><span class="tag"></span><span class="txt"><span class="say"></span><span class="mad" title="Frustration"><i></i></span></span></button>`;
+  li.querySelector(".t").textContent = clock(c.t);
+  const tag = li.querySelector(".tag");
+  tag.textContent = c.priority === "nav" ? "Nav" : "Roast";
+  tag.classList.add(c.priority);
+  li.querySelector(".say").textContent = c.text;
+  li.querySelector(".mad i").style.width = `${c.frustration}%`;
+  li.querySelector("button").addEventListener("click", (ev) => {
+    log.querySelectorAll("button[aria-pressed=true]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    ev.currentTarget.setAttribute("aria-pressed", "true");
+    selected = c.t;
+    draw();
+  });
+  log.appendChild(li);
+});
+
+draw();
+window.addEventListener("resize", draw);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

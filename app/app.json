@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Backseat Driver",
+    "slug": "backseat-driver",
+    "scheme": "backseatdriver",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.brandonjconover.backseatdriver"
+    },
+    "android": {
+      "package": "com.brandonjconover.backseatdriver",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "ACTIVITY_RECOGNITION"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Backseat Driver needs your location to navigate. And to judge you.",
+          "locationAlwaysAndWhenInUsePermission": "Backseat Driver keeps navigating with the screen off. It keeps judging, too.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Backseat Driver uses motion to notice when you leave your phone in the car."
+        }
+      ],
+      "./plugins/withGoogleNavigation"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
