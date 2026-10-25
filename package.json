@@ -1,0 +1,15 @@
+{
+  "name": "backseat-driver",
+  "private": true,
+  "workspaces": [
+    "engine",
+    "app"
+  ],
+  "scripts": {
+    "test": "npm test -w engine && npm test -w app",
+    "typecheck": "npm run typecheck -w engine && npm run typecheck -w app"
+  },
+  "engines": {
+    "node": ">=22.18"
+  }
+}

@@ -1,0 +1,235 @@
+<title>Backseat Driver Trip Replay</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an in-dash nav screen. Report card on top, map with heat on the left, transcript on the right. */
+:root {
+  --bg: #eef0ee;
+  --panel: #ffffff;
+  --ink: #1d2320;
+  --muted: #5d6762;
+  --line: #d5dad7;
+  --road: #9aa4a0;
+  --sign: #ffffff;
+  --sign-ink: #111;
+  --heat: 214, 54, 32;
+  --nav: #1f6f5c;
+  --roast: #b8361f;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141816; --panel: #1c211f; --ink: #e6ebe8; --muted: #94a09a; --line: #2e3532;
+    --road: #56605b; --sign: #f4f4f0; --sign-ink: #111; --heat: 255, 96, 64; --nav: #58c3a6; --roast: #ff7b5f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141816; --panel: #1c211f; --ink: #e6ebe8; --muted: #94a09a; --line: #2e3532;
+  --road: #56605b; --sign: #f4f4f0; --sign-ink: #111; --heat: 255, 96, 64; --nav: #58c3a6; --roast: #ff7b5f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 40px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+header h1 { font: 800 clamp(30px, 5vw, 44px)/1 var(--display); letter-spacing: .01em; margin: 0; text-transform: uppercase; text-wrap: balance; }
+header p { margin: 6px 0 0; color: var(--muted); max-width: 65ch; }
+
+.report { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+.sign { width: 112px; background: var(--sign); color: var(--sign-ink); border: 3px solid var(--sign-ink); outline: 3px solid var(--sign); border-radius: 8px; text-align: center; padding: 8px 6px 4px; font-family: var(--display); }
+.sign small { display: block; font-weight: 800; font-size: 15px; letter-spacing: .06em; line-height: 1.05; }
+.sign b { display: block; font-weight: 800; font-size: 64px; line-height: 1; }
+.scores { display: grid; gap: 10px; min-width: 0; }
+.quip { font-size: 17px; font-weight: 500; margin: 0; }
+.parts { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.part { min-width: 0; }
+.part h3 { margin: 0; font: 600 13px var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.part .val { font: 800 26px/1.1 var(--display); }
+.part .sub { color: var(--muted); font-size: 13px; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; align-items: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.card h2 { margin: 0 0 10px; font: 800 20px var(--display); text-transform: uppercase; letter-spacing: .03em; }
+#map { width: 100%; aspect-ratio: 4 / 5; max-width: 100%; display: block; border-radius: 6px; background: var(--bg); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; color: var(--muted); font-size: 13px; align-items: center; }
+.ramp { width: 90px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgba(var(--heat), .1), rgba(var(--heat), 1)); }
+.shame { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; font-size: 13px; }
+.shame li { display: grid; grid-template-columns: 3.2em 1fr; gap: 8px; }
+.shame .w { font-family: var(--mono); color: var(--roast); font-variant-numeric: tabular-nums; }
+
+.log { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 720px; overflow-y: auto; }
+.log li button { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 3.4em 3.6em 1fr; gap: 10px; width: 100%; padding: 8px 8px; border-radius: 6px; }
+.log li button:hover, .log li button[aria-pressed="true"] { background: var(--bg); }
+.log li button:focus-visible { outline: 2px solid var(--nav); }
+.t { font: 13px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
+.tag { font: 600 11px var(--body); letter-spacing: .08em; text-transform: uppercase; padding-top: 4px; }
+.tag.nav { color: var(--nav); } .tag.roast { color: var(--roast); }
+.txt { min-width: 0; }
+.mad { display: block; height: 4px; margin-top: 6px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.mad i { display: block; height: 100%; background: var(--roast); }
+.note { padding: 10px 8px 2px; color: var(--muted); font-style: italic; font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; }
+
+@media (max-width: 760px) {
+  .main { grid-template-columns: 1fr; }
+  .report { grid-template-columns: 1fr; justify-items: start; }
+  .log { max-height: none; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Trip replay</h1>
+    <p>A simulated 7 minute drive run through the Backseat Driver critique engine. Every line below is what the GPS would say out loud. Tap a line to see where it happened.</p>
+  </header>
+
+  <section class="report" aria-label="Trip grade">
+    <div class="sign" aria-label="Overall grade"><small>TRIP<br>GRADE</small><b id="g-letter">F</b></div>
+    <div class="scores">
+      <p class="quip" id="g-quip"></p>
+      <div class="parts">
+        <div class="part"><h3>Following directions</h3><div class="val" id="g-instr"></div><div class="sub" id="g-instr-sub"></div></div>
+        <div class="part"><h3>Driving</h3><div class="val" id="g-drive"></div><div class="sub" id="g-drive-sub"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="main">
+    <section class="card">
+      <h2>Where you went wrong</h2>
+      <canvas id="map" aria-label="Route with heat map of driving mistakes"></canvas>
+      <div class="legend"><span>Fewer mistakes</span><span class="ramp"></span><span>More</span></div>
+      <ol class="shame" id="shame"></ol>
+    </section>
+    <section class="card">
+      <h2>What the GPS said</h2>
+      <ol class="log" id="log"></ol>
+    </section>
+  </div>
+  <footer>Sample data from <code>sim/drive.ts</code>, seed 7. The heat map uses the engine's incident log; in the real app it sits on top of the street map.</footer>
+</div>
+
+<script>
+const DATA = /*DATA*/null;
+const LABEL = { speeding: "speeding", tooSlow: "dawdling", traffic: "sat in traffic", hardBraking: "hard brake", hardAccel: "jackrabbit start", longStop: "long stop", missedTurn: "missed turn", wrongTurn: "wrong-way turn", lateTurn: "late turn", rerouted: "reroute" };
+const r = DATA.report;
+const $ = (id) => document.getElementById(id);
+const clock = (ms) => { const s = Math.floor(ms / 1000); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+
+$("g-letter").textContent = r.overall.letter;
+$("g-quip").textContent = r.overall.quip;
+$("g-instr").textContent = `${r.instructions.letter} · ${r.instructions.score}`;
+$("g-instr-sub").textContent = `${r.instructions.onTime} on time, ${r.instructions.late} late, ${r.instructions.missed} missed, ${r.instructions.wrongWay} wrong way, ${r.instructions.reroutes} reroute${r.instructions.reroutes === 1 ? "" : "s"}`;
+$("g-drive").textContent = `${r.driving.letter} · ${r.driving.score}`;
+$("g-drive-sub").textContent = `${r.driving.speedingSeconds}s speeding (worst +${r.driving.maxOverLimit} mph), ${r.driving.hardBrakes} hard brake${r.driving.hardBrakes === 1 ? "" : "s"}, ${r.driving.hardAccels} jackrabbit start${r.driving.hardAccels === 1 ? "" : "s"}`;
+
+const tracks = DATA.track;
+const pointAt = (t) => tracks[Math.min(tracks.length - 1, Math.round(t / 1000))];
+
+// Hall of shame
+const shame = $("shame");
+r.heatmap.cells.slice(0, 4).forEach((c) => {
+  const li = document.createElement("li");
+  const kinds = Object.entries(c.kinds).map(([k, n]) => (n > 1 ? `${LABEL[k]} ×${n}` : LABEL[k])).join(", ");
+  li.innerHTML = `<span class="w">${c.weight.toFixed(1)}</span><span></span>`;
+  li.lastChild.textContent = kinds;
+  shame.appendChild(li);
+});
+
+// Map
+const canvas = $("map");
+let selected = null;
+function draw() {
+  const css = getComputedStyle(document.documentElement);
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  canvas.width = w * dpr; canvas.height = h * dpr;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const lons = tracks.map((p) => p[0]), lats = tracks.map((p) => p[1]);
+  const minLon = Math.min(...lons), maxLon = Math.max(...lons), minLat = Math.min(...lats), maxLat = Math.max(...lats);
+  const kx = Math.cos((minLat * Math.PI) / 180);
+  const spanX = Math.max((maxLon - minLon) * kx, 1e-4), spanY = Math.max(maxLat - minLat, 1e-4);
+  const pad = 36;
+  const s = Math.min((w - pad * 2) / spanX, (h - pad * 2) / spanY);
+  const ox = (w - spanX * s) / 2, oy = (h - spanY * s) / 2;
+  const xy = ([lon, lat]) => [ox + (lon - minLon) * kx * s, h - (oy + (lat - minLat) * s)];
+
+  // Road
+  ctx.lineCap = ctx.lineJoin = "round";
+  ctx.strokeStyle = css.getPropertyValue("--road").trim();
+  ctx.lineWidth = 10;
+  ctx.beginPath();
+  tracks.forEach((p, i) => { const [x, y] = xy(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+  ctx.stroke();
+
+  // Heat
+  const heat = css.getPropertyValue("--heat").trim();
+  const maxW = Math.max(...r.heatmap.geojson.features.map((f) => f.properties.weight));
+  r.heatmap.geojson.features.forEach((f) => {
+    const [x, y] = xy(f.geometry.coordinates);
+    const k = f.properties.weight / maxW;
+    const rad = 18 + 34 * k;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+    g.addColorStop(0, `rgba(${heat}, ${0.25 + 0.55 * k})`);
+    g.addColorStop(1, `rgba(${heat}, 0)`);
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Start / end
+  const ink = css.getPropertyValue("--ink").trim(), panel = css.getPropertyValue("--panel").trim();
+  ctx.font = `600 12px ${css.getPropertyValue("--body")}`;
+  [[tracks[0], "Start"], [tracks[tracks.length - 1], "Arrived"]].forEach(([p, label]) => {
+    const [x, y] = xy(p);
+    ctx.fillStyle = panel; ctx.strokeStyle = ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = ink; ctx.fillText(label, x + 10, y + 4);
+  });
+
+  // Selected line
+  if (selected !== null) {
+    const [x, y] = xy(pointAt(selected));
+    ctx.fillStyle = css.getPropertyValue("--nav").trim();
+    ctx.strokeStyle = panel; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  }
+}
+
+// Transcript
+const log = $("log");
+DATA.log.forEach((e) => {
+  const li = document.createElement("li");
+  if (e.note) { li.className = "note"; li.textContent = `${clock(e.t)} · ${e.note}`; log.appendChild(li); return; }
+  const c = e.c;
+  li.innerHTML = `<button type="button" aria-pressed="false"><span class="t"></span><span class="tag"></span><span class="txt"><span class="say"></span><span class="mad" title="Frustration"><i></i></span></span></button>`;
+  li.querySelector(".t").textContent = clock(c.t);
+  const tag = li.querySelector(".tag");
+  tag.textContent = c.priority === "nav" ? "Nav" : "Roast";
+  tag.classList.add(c.priority);
+  li.querySelector(".say").textContent = c.text;
+  li.querySelector(".mad i").style.width = `${c.frustration}%`;
+  li.querySelector("button").addEventListener("click", (ev) => {
+    log.querySelectorAll("button[aria-pressed=true]").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    ev.currentTarget.setAttribute("aria-pressed", "true");
+    selected = c.t;
+    draw();
+  });
+  log.appendChild(li);
+});
+
+draw();
+window.addEventListener("resize", draw);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
