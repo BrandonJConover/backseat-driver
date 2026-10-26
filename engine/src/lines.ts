@@ -97,6 +97,7 @@ export type LineKey =
   | "anyoneElse"
   | "music"
   | "music.judge"
+  | "music.roundabout"
   | "holiday.christmas"
   | "holiday.halloween"
   | "holiday.newYear"
@@ -952,6 +953,12 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Thanksgiving. I'm thankful for one thing: the off button. You never use it.", "Happy Thanksgiving. Going to see family? I'll be in the car. Thankful."],
     ["Thanksgiving. Let's go around and say what we're grateful for. You first. I'll wait. I'm a GPS. I'm used to waiting.", "Thanksgiving traffic. Thankful for nothing."],
     ["THANKSGIVING. I'm thankful this trip will end eventually.", "Thanksgiving. Gobble gobble. Drive."],
+  ],
+  // A roundabout coming up with the music on. Brandon's line. " || " is an awkward pause.
+  "music.roundabout": [
+    ["Oh look, a roundabout! Do you know what else in this car is round? || The volume knob."],
+    ["Oh look, a roundabout! Do you know what else in this car is round? || The volume knob."],
+    ["Oh look, a roundabout! Do you know what else in this car is round? || THE VOLUME KNOB."],
   ],
   arrived: [
     [
