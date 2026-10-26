@@ -62,6 +62,7 @@ export type LineKey =
   | "plateGame.neighbor"
   | "plateGame.repeat"
   | "plateGame.repeatFirst"
+  | "plateGame.parked"
   | "plateGame.newFar"
   | "plateGame.rare"
   | "plateGame.madeUp"
@@ -581,6 +582,12 @@ export const LINES: Record<LineKey, Tiers> = {
     ["We already have that one champ. Sometimes I wish I wasn't in this car."],
     ["We already have that one champ. Sometimes I wish I wasn't in this car."],
     ["We already have that one champ. Sometimes I wish I wasn't in this car."],
+  ],
+  // Brandon's line, word for word: plates called out while parked or in a parking lot don't count.
+  "plateGame.parked": [
+    ["Hey that's cheating. New rule, no parking lots."],
+    ["Hey that's cheating. New rule, no parking lots."],
+    ["Hey that's cheating. New rule, no parking lots."],
   ],
   "plateGame.repeat": [
     ["We already have that one champ. Sometimes I wish I wasn't in this car.", "We already have {plate}. Keep up.", "{plate} again? I have a list. It's on the list."],
