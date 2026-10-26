@@ -97,6 +97,12 @@ export type LineKey =
   | "anyoneElse"
   | "music"
   | "music.judge"
+  | "holiday.christmas"
+  | "holiday.halloween"
+  | "holiday.newYear"
+  | "holiday.valentines"
+  | "holiday.july4"
+  | "holiday.thanksgiving"
   | "longDrive.posture"
   | "longDrive.smell"
   | "longDrive.metal"
@@ -914,6 +920,38 @@ export const LINES: Record<LineKey, Tiers> = {
     ["You call this music?"],
     ["You call this music?"],
     ["You call THIS music?"],
+  ],
+  // Holidays, Grinch edition. Christmas is Brandon's line, at a red light after dark in
+  // December. The others open the trip on the day.
+  "holiday.christmas": [
+    ["It's that time of year again. Christmas. I hate lights."],
+    ["It's that time of year again. Christmas. I hate lights."],
+    ["It's that time of year again. CHRISTMAS. I HATE LIGHTS."],
+  ],
+  "holiday.halloween": [
+    ["Halloween. The one night a year people are scarier than your driving. Barely.", "Trick or treat. I'll take the treat. A charger. A fast one."],
+    ["Happy Halloween. I'm dressed as a GPS that's given up.", "Halloween. Watch for kids in costumes. They're people. Small ones. Don't hit them."],
+    ["HALLOWEEN. The scariest thing on the road tonight is you.", "Trick or treat. You've already tricked me into this car."],
+  ],
+  "holiday.newYear": [
+    ["Happy New Year. My resolution is to stop expecting things from you.", "New year, same driver. Let's go."],
+    ["New Year's. Last year you missed a lot of turns. Let's beat that. Downward.", "Happy New Year. I resolved to be more patient. It's already over."],
+    ["HAPPY NEW YEAR. Same car. Same route. Same you.", "New year. I'm already tired of it."],
+  ],
+  "holiday.valentines": [
+    ["Valentine's Day. Don't look at me like that. I'm a phone.", "Happy Valentine's Day. I got you nothing. You got me a cracked case. We're even."],
+    ["Valentine's Day. If we're getting flowers, there's a store on the way. I'll ignore it.", "Valentine's Day. My heart belongs to my charger."],
+    ["VALENTINE'S DAY. Love is blind. So is your blind spot check.", "Valentine's. No. Just drive."],
+  ],
+  "holiday.july4": [
+    ["Fourth of July. Fireworks tonight. Please don't try to drive like one.", "Happy Fourth. Celebrate your independence from turn signals, I guess."],
+    ["Fourth of July. Loud bangs tonight. Either fireworks or your parking.", "Independence Day. I'd like some independence from this car."],
+    ["FOURTH OF JULY. If anything explodes in this car, it had better be confetti.", "Happy Fourth. Freedom. Except mine."],
+  ],
+  "holiday.thanksgiving": [
+    ["Thanksgiving. I'm thankful for one thing: the off button. You never use it.", "Happy Thanksgiving. Going to see family? I'll be in the car. Thankful."],
+    ["Thanksgiving. Let's go around and say what we're grateful for. You first. I'll wait. I'm a GPS. I'm used to waiting.", "Thanksgiving traffic. Thankful for nothing."],
+    ["THANKSGIVING. I'm thankful this trip will end eventually.", "Thanksgiving. Gobble gobble. Drive."],
   ],
   arrived: [
     [
