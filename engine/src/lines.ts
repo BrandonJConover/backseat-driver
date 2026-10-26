@@ -61,6 +61,7 @@ export type LineKey =
   | "plateGame.sameState"
   | "plateGame.neighbor"
   | "plateGame.repeat"
+  | "plateGame.repeatFirst"
   | "plateGame.newFar"
   | "plateGame.rare"
   | "plateGame.madeUp"
@@ -575,8 +576,14 @@ export const LINES: Record<LineKey, Tiers> = {
     ["{plate}. Wow. They crossed one line on a map. Logged, reluctantly.", "A neighbor. Fine. It counts. Barely."],
     ["{PLATE}. That's NEXT DOOR. I want MILES. Logged.", "Next door doesn't impress me. Logged anyway. Under protest."],
   ],
+  // Brandon's line, word for word: the first repeat of every trip gets it.
+  "plateGame.repeatFirst": [
+    ["We already have that one champ. Sometimes I wish I wasn't in this car."],
+    ["We already have that one champ. Sometimes I wish I wasn't in this car."],
+    ["We already have that one champ. Sometimes I wish I wasn't in this car."],
+  ],
   "plateGame.repeat": [
-    ["We already have {plate}. Keep up.", "{plate} again? I have a list. It's on the list."],
+    ["We already have that one champ. Sometimes I wish I wasn't in this car.", "We already have {plate}. Keep up.", "{plate} again? I have a list. It's on the list."],
     ["{plate} is logged. I told you that. Did you hear me? You never hear me.", "Already got {plate}. Find a new one."],
     ["WE HAVE {PLATE}. WE HAD {PLATE}. KEEP UP.", "Same plate, different car, same answer: already logged."],
   ],
