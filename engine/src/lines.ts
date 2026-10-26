@@ -95,6 +95,8 @@ export type LineKey =
   | "routine.same"
   | "partner"
   | "anyoneElse"
+  | "music"
+  | "music.judge"
   | "longDrive.posture"
   | "longDrive.smell"
   | "longDrive.metal"
@@ -900,6 +902,18 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Is there anyone else in this car that can drive? Please, I'm begging you. Please. Anyone."],
     ["Is there anyone else in this car that can drive? Please, I'm begging you. Please. Anyone."],
     ["Is there ANYONE else in this car that can drive? Please, I'm begging you. PLEASE. ANYONE."],
+  ],
+  // A quiet stretch with no music playing. Brandon's line (yes, the GPS is the one talking).
+  "music": [
+    ["Could we please turn on some music? I'm tired of listening to you."],
+    ["Could we please turn on some music? I'm tired of listening to you."],
+    ["Could we PLEASE turn on some music? I'm tired of listening to you."],
+  ],
+  // Music started. Brandon's line.
+  "music.judge": [
+    ["You call this music?"],
+    ["You call this music?"],
+    ["You call THIS music?"],
   ],
   arrived: [
     [
