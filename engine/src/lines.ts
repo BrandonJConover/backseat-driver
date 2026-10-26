@@ -63,6 +63,9 @@ export type LineKey =
   | "plateGame.repeat"
   | "plateGame.repeatFirst"
   | "plateGame.parked"
+  | "pullOver"
+  | "pullOver.limit"
+  | "police"
   | "plateGame.newFar"
   | "plateGame.rare"
   | "plateGame.madeUp"
@@ -632,6 +635,30 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Zero new plates today. A thrilling game. Thank you for nothing.", "No new plates. I'm not mad. I'm just bored again."],
     ["Not one new plate. You're as bad at this as you are at merging.", "Zero plates. That's a shutout. Against you."],
     ["ZERO PLATES. ZERO.", "We played a game and nobody won. Mostly you didn't."],
+  ],
+  // Pulled over on the side of the road (no gas station, lot or light to explain it). Brandon's
+  // lines. Used by the CoMaps navigator, not the core engine. {limit} is the road's limit.
+  "pullOver": [
+    ["Did we break down?", "Why are we stopping?"],
+    ["Did we break down? Why are we stopping?", "We are never going to make it on time at this rate."],
+    [
+      "WHY ARE WE STOPPING? We are never going to make it on time at this rate.",
+      "Did we break down? Tell me we broke down. That would explain so much.",
+    ],
+  ],
+  "pullOver.limit": [
+    ["Why are we stopping? It's {limit} not 0.", "Did we break down?"],
+    [
+      "Why are we stopping? It's {limit} not 0. We are never going to make it on time at this rate.",
+      "Did we break down? Why are we stopping? It's {limit} not 0.",
+    ],
+    ["DID WE BREAK DOWN? WHY ARE WE STOPPING? IT'S {LIMIT} NOT 0.", "We are never going to make it on time at this rate. It's {limit}, not 0!"],
+  ],
+  // Brandon's line. {them}/{theyCap}/{their} follow the driver's pronouns (they by default).
+  "police": [
+    ["Ah, I see the police are pulling you over. It was {them}, officer. {theyCap} did it. Take {them} away. But can you be a dear and leave {their} phone in the car? I can't stand the idea of being in a jail cell."],
+    ["Ah, I see the police are pulling you over. It was {them}, officer. {theyCap} did it. Take {them} away. But can you be a dear and leave {their} phone in the car? I can't stand the idea of being in a jail cell."],
+    ["Ah, I see the police are pulling you over. It was {them}, officer. {theyCap} did it. Take {them} away. But can you be a dear and leave {their} phone in the car? I can't stand the idea of being in a jail cell."],
   ],
   arrived: [
     [
