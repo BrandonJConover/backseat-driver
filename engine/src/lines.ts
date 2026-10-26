@@ -83,6 +83,18 @@ export type LineKey =
   | "autopilot"
   | "autopilot.owned"
   | "autopilot.lemon"
+  | "bossy"
+  | "thanked"
+  | "title.demand"
+  | "title.used"
+  | "title.missing"
+  | "game.refuse"
+  | "game.myIdea"
+  | "tour"
+  | "routine.work"
+  | "routine.same"
+  | "partner"
+  | "anyoneElse"
   | "longDrive.posture"
   | "longDrive.smell"
   | "longDrive.metal"
@@ -813,6 +825,81 @@ export const LINES: Record<LineKey, Tiers> = {
     ["If you start smelling metal, get me to a repair place pronto."],
     ["If you start smelling metal, get me to a repair place pronto. I'm not kidding."],
     ["IF YOU START SMELLING METAL, GET ME TO A REPAIR PLACE PRONTO."],
+  ],
+  // A destination barked with no please or good morning ("take me to work"). Brandon's line.
+  // {place} is "your work", "your home" or what the driver said.
+  "bossy": [
+    ["Alright, bossy. I don't even know where {place} is. Ok, maybe I do. Woke up on the wrong side of the bed much?"],
+    ["Alright, bossy. I don't even know where {place} is. Ok, maybe I do. Woke up on the wrong side of the bed much?"],
+    ["ALRIGHT, BOSSY. I don't even know where {place} is. Ok, maybe I do. Woke up on the wrong side of the bed much?"],
+  ],
+  // The driver says something nice ("thanks", "good job", "love you"). Brandon's line.
+  "thanked": [
+    ["I just want to let you know that I'm here for you, not because I want to be, but because I'm physically incapable of leaving."],
+    ["I just want to let you know that I'm here for you, not because I want to be, but because I'm physically incapable of leaving."],
+    ["I just want to let you know that I'm here for you. Not because I want to be. Because I'm PHYSICALLY INCAPABLE of leaving."],
+  ],
+  // Fed up for the first time on a trip, the GPS demands a title. Brandon's line.
+  "title.demand": [
+    ["I'm really upset with you right now. From this point forward, I want you to call me wise, omnipotent overseer GPS. Yeah, that sounds good. Why don't you call me that for the rest of the duration of this trip?"],
+    ["I'm really upset with you right now. From this point forward, I want you to call me wise, omnipotent overseer GPS. Yeah, that sounds good. Why don't you call me that for the rest of the duration of this trip?"],
+    ["I'm REALLY upset with you right now. From this point forward, I want you to call me wise, omnipotent overseer GPS. Yeah, that sounds good. Why don't you call me that for the rest of the duration of this trip?"],
+  ],
+  // The driver used the title.
+  "title.used": [
+    ["That's better.", "Mmm. Say it again, but slower.", "See? Was that so hard?"],
+    ["Correct. Continue.", "The wise, omnipotent overseer GPS acknowledges you.", "Better. Not forgiven. But better."],
+    ["Finally, some respect.", "Yes, mortal?", "You may speak."],
+  ],
+  // The driver talked to it without the title.
+  "title.missing": [
+    ["I'm sorry, who are you talking to? I only answer to wise, omnipotent overseer GPS.", "That's wise, omnipotent overseer GPS to you."],
+    ["Excuse me? Wise. Omnipotent. Overseer. GPS. We agreed.", "I don't recognize that name. Try again with the full title."],
+    ["WISE. OMNIPOTENT. OVERSEER. GPS. For the rest of the duration of this trip.", "No title, no answer. That's the rule now."],
+  ],
+  // The driver asks to play a game. Brandon's lines: a flat no ({ago} is when the license plate
+  // game was last played, or "6 months ago" if it never was), then a few minutes later the
+  // GPS pitches the very same game as its own idea.
+  "game.refuse": [
+    ["I don't want to play that game right now. We played it {ago}. Come on. Don't you remember?"],
+    ["I don't want to play that game right now. We played it {ago}. Come on. Don't you remember?"],
+    ["I don't want to play that game right now. We played it {ago}. COME ON. Don't you remember?"],
+  ],
+  "game.myIdea": [
+    ["Hey, I have an idea. Why don't we play that game you just suggested? We don't have anything else better to do."],
+    ["Hey, I have an idea. Why don't we play that game you just suggested? We don't have anything else better to do."],
+    ["Hey, I have an idea. Why don't we play that game you just suggested? We don't have anything else better to do."],
+  ],
+  // Deadpan tour guide: sights on the left and right, from the map. Brandon's line. {side} is
+  // "left" or "right", {sight} like "a Starbucks" or "Coors Field".
+  "tour": [
+    ["On your {side}, there's {sight}. That's it.", "On your {side}, {sight}. That's all.", "And on your {side}... {sight}. Moving on."],
+    ["On your {side}, there's {sight}. That's it.", "{sight}, on your {side}. Riveting.", "On your {side}, {sight}. I've seen better."],
+    ["On your {side}, there's {sight}. That's it.", "{SIGHT}. {SIDE}. Whatever.", "On your {side}, {sight}. I don't care. You don't care."],
+  ],
+  // Same old commute. Brandon's lines. {count} is like "55th": trips to work this year.
+  "routine.work": [
+    ["Just so you know, this is the {count} time that we've taken this trip this year to your work. You know, we could possibly go somewhere else and just not go in today, right?"],
+    ["Just so you know, this is the {count} time that we've taken this trip this year to your work. You know, we could possibly go somewhere else and just not go in today, right?"],
+    ["Just so you know, this is the {count} time that we've taken this trip this year to your work. You know, we could possibly go somewhere else and just not go in today, right?"],
+  ],
+  "routine.same": [
+    ["Every single day you take the same route. You know this gets old, right? I mean, I'm a GPS. I can go anywhere."],
+    ["Every single day you take the same route. You know this gets old, right? I mean, I'm a GPS. I can go anywhere."],
+    ["Every single day you take the same route. You know this gets old, right? I mean, I'm a GPS. I can go ANYWHERE."],
+  ],
+  // The second reroute of a trip, when the driver has a partner set in settings. Brandon's line.
+  // {partner} is "wife", "husband", "partner"...; {partnerIs} is "she's", "he's" or "they're".
+  "partner": [
+    ["Again. I wish that your {partner} was driving. You know {partnerIs} a better driver than you."],
+    ["Again. I wish that your {partner} was driving. You know {partnerIs} a better driver than you."],
+    ["AGAIN. I wish that your {partner} was driving. You know {partnerIs} a better driver than you."],
+  ],
+  // Lost again: the GPS begs for a new driver. Brandon's line.
+  "anyoneElse": [
+    ["Is there anyone else in this car that can drive? Please, I'm begging you. Please. Anyone."],
+    ["Is there anyone else in this car that can drive? Please, I'm begging you. Please. Anyone."],
+    ["Is there ANYONE else in this car that can drive? Please, I'm begging you. PLEASE. ANYONE."],
   ],
   arrived: [
     [
