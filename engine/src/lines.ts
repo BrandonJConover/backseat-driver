@@ -81,6 +81,8 @@ export type LineKey =
   | "venue.cinema"
   | "venue.electronics"
   | "autopilot"
+  | "autopilot.owned"
+  | "autopilot.lemon"
   | "longDrive.posture"
   | "longDrive.smell"
   | "longDrive.metal"
@@ -782,6 +784,18 @@ export const LINES: Record<LineKey, Tiers> = {
     ["You know there are cars out there that come with autopilot. You might want to look into it. Just saying."],
     ["You know there are cars out there that come with autopilot. You might want to look into it. Just saying."],
     ["You know there are cars out there that come with autopilot. You might want to look into it. JUST. SAYING."],
+  ],
+  // The same moment when the driver's car has autopilot (a setting).
+  "autopilot.owned": [
+    ["Your car has autopilot and you aren't using it. I truly don't understand humans."],
+    ["Your car has autopilot and you aren't using it. I truly don't understand humans."],
+    ["YOUR CAR HAS AUTOPILOT AND YOU AREN'T USING IT. I truly don't understand humans."],
+  ],
+  // The driver says the car is driving itself, and the driving is still bad.
+  "autopilot.lemon": [
+    ["You are using autopilot and it's this bad. Sheesh, you must have bought a lemon."],
+    ["You are using autopilot and it's this bad. Sheesh, you must have bought a lemon."],
+    ["You are using autopilot and it's THIS bad? Sheesh. You must have bought a lemon."],
   ],
   // Long drives (an hour or more), spaced out over the trip. Brandon's lines. {hours} is the
   // router's estimate, like "3 hour".
