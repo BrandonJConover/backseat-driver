@@ -156,7 +156,12 @@ export type LineKey =
   | "cmd.overview"
   | "cmd.settings"
   | "cmd.stopListening"
-  | "cmd.help";
+  | "cmd.help"
+  | "search.results"
+  | "search.one"
+  | "search.none"
+  | "search.picked"
+  | "search.huh";
 
 type Tiers = [string[], string[], string[]];
 
@@ -1577,6 +1582,34 @@ export const LINES: Record<LineKey, Tiers> = {
       "SETTINGS. You won't find a mute button for the truth.",
       "Settings open. Please don't do this while driving. Or, honestly, ever.",
     ],
+  ],
+  // Spoken search results. {count} is "3", {list} is "First, Starbucks on Main, half a mile.
+  // Second, ..." and {place} the one picked.
+  "search.results": [
+    ["I found {count}. {list}. Which one? Say first, second, or third.", "{count} options. {list}. Pick one. Choose wisely, for once."],
+    ["{count} of them. {list}. Which one? And please don't say 'the other one'.", "Okay. {list}. Which one?"],
+    ["{COUNT}. {list}. PICK ONE.", "{list}. Which one? Use your words."],
+  ],
+  "search.one": [
+    ["Only one {place} anywhere near here. Lucky you. Let's go.", "Found it. {place}. Only one, so even you can't pick the wrong one."],
+    ["One result. {place}. Going there, before you change your mind.", "{place}. The only one. Routing."],
+    ["ONE {PLACE}. ONE. Going.", "{place}. No choices. You're welcome."],
+  ],
+  "search.none": [
+    ["I couldn't find {place} anywhere near here. Are you sure that's a real place?", "Nothing called {place} around here. Try saying it differently. Or try saying it correctly."],
+    ["No {place}. Anywhere. Did you make it up?", "I searched everywhere for {place}. Nothing. Try again."],
+    ["{PLACE} DOES NOT EXIST. Not here, anyway.", "No {place}. Say something else."],
+  ],
+  "search.picked": [
+    ["{place}. Good choice. I mean, it's a choice.", "{place} it is. Routing."],
+    ["{place}. Fine. Let's go.", "{place}. Took you long enough."],
+    ["{PLACE}. FINALLY. GOING.", "{place}. Let's get this over with."],
+  ],
+  // The driver's answer to "which one?" didn't match any result.
+  "search.huh": [
+    ["Which one was that? Say first, second, or third.", "I didn't catch that. First, second, or third?"],
+    ["That wasn't one of the options. First, second, or third?"],
+    ["FIRST. SECOND. OR THIRD. Pick a number."],
   ],
   // "What can you do?": a tour of the voice commands, in character.
   "cmd.help": [
