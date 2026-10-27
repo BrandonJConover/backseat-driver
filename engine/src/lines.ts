@@ -112,7 +112,9 @@ export type LineKey =
   | "plateGame.madeUp"
   | "plateGame.unheard"
   | "plateGame.wrapUp"
-  | "plateGame.wrapUpNone";
+  | "plateGame.wrapUpNone"
+  | "wrongWay"
+  | "wrongWay.again";
 
 type Tiers = [string[], string[], string[]];
 
@@ -959,6 +961,30 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Oh look, a roundabout! Do you know what else in this car is round? || The volume knob."],
     ["Oh look, a roundabout! Do you know what else in this car is round? || The volume knob."],
     ["Oh look, a roundabout! Do you know what else in this car is round? || THE VOLUME KNOB."],
+  ],
+  // Driving away from the route (GPS course points the opposite way). Brandon asked for it.
+  "wrongWay": [
+    [
+      "Um. You're facing the wrong way. The destination is behind us. Just thought you should know.",
+      "Fun fact: we're pointed the wrong way. Every second you keep going is a second we drive back.",
+      "Wrong way. The road you want is behind you. I'd point, but I don't have arms.",
+    ],
+    [
+      "You're going the wrong way. The destination is BEHIND us. It hasn't moved. You have.",
+      "Wrong direction. I gave you one job, and it was to face the right way.",
+      "We are facing the wrong way. I'm not saying I'm surprised. I'm just saying it out loud.",
+    ],
+    [
+      "WRONG WAY. Turn around. The destination is behind us, exactly where I left it.",
+      "You are driving AWAY from where we're going. On purpose? Please tell me it's on purpose.",
+      "Wrong. Way. I cannot stress this enough. The other way. The OTHER way.",
+    ],
+  ],
+  // Facing the wrong way again later in the same trip.
+  "wrongWay.again": [
+    ["And we're facing the wrong way again. Bold strategy."],
+    ["Wrong way. Again. Are you trying to get us lost, or does it just come naturally?"],
+    ["WRONG WAY AGAIN. At this point I think you're doing it to spite me."],
   ],
   arrived: [
     [
