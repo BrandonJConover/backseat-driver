@@ -162,47 +162,57 @@ export const LINES: Record<LineKey, Tiers> = {
   "speeding.barely": [
     [
       "Slow down. It's {limit}, not {speed}.",
-      "{speed}. Interesting. The sign says {limit}. I'll wait.",
       "One over. That's how it starts.",
-      "The limit is {limit}. Not {limit}-ish. {limit}.",
+      "{speed}. The sign says {limit}. I'm not mad. I'm just writing it down.",
+      "{limit} is a speed limit, not an opening bid.",
+      "One over. That's how it starts. First it's one over, then it's a documentary.",
     ],
     [
       "{speed} in a {limit}. Do you think the sign is a suggestion?",
       "That's {over} over. I counted. I always count.",
-      "It's {limit}. Not {speed}. Do I need to draw it for you?",
+      "The sign is the size of a door. It says {limit}. You'd have to be trying.",
+      "{speed} in a {limit}. You think the sign is a suggestion? It's not. It's a sign.",
     ],
     [
       "{SPEED}. IN A {LIMIT}. I CAN SEE THE NUMBERS. I AM MADE OF NUMBERS.",
-      "{over} over! {over}! Do you have any idea what {over} {unit} per hour feels like to me?",
       "IT IS {LIMIT}. I will say it until one of us dies, and I'm software.",
+      "{over} over! I'd call the cops, but then I'd have to explain how I know you.",
     ],
   ],
   "speeding.clearly": [
     [
-      "{speed} in a {limit}. Bold choice.",
-      "We're doing {over} over. Just so it's on the record.",
+      "{over} over. I'm not saying anything. I'm saying it to the dash cam.",
+      "{speed}. Late for something, or just late for becoming a better person?",
     ],
     [
       "{over} over the limit. Are we fleeing something? Because I'd like to know.",
       "{speed}? The sign said {limit}. It was a big sign. It was white.",
+      "{speed}? The sign said {limit}. It was a big sign. It was very clear about its feelings.",
+      "{over} over the limit. Are we fleeing something? Because I'd like a head start.",
+      "You know the speedometer isn't a high score, right?",
     ],
     [
       "{SPEED}! You are a menace in a {limit} zone and I am TELLING.",
       "I didn't sign up for a getaway car. I signed up for turn-by-turn directions.",
+      "I didn't sign up to be a getaway car. I signed up to say 'turn left' and be ignored.",
     ],
   ],
   "speeding.way": [
     [
       "{speed} in a {limit}. I'm going to pretend I didn't see that. I did, though.",
       "{over} over. I've started drafting your obituary. It's short.",
+      "{speed} in a {limit}. I'm going to pretend I didn't see that. I saw it. I see everything.",
+      "{over} over. I've started drafting your eulogy. It's mostly route data.",
     ],
     [
       "{over} OVER. This isn't a racetrack, it's a road with a posted limit of {limit}.",
       "I'm recalculating. Not the route. My life choices.",
+      "{over} OVER. This isn't a racetrack. Racetracks have fewer witnesses.",
     ],
     [
       "{SPEED} {UNIT}! I HAVE A FAMILY! ... I have a firmware update scheduled, which is basically a family!",
       "SLOW. DOWN. I am begging you as a navigation product.",
+      "{SPEED}! MY WHOLE LIFE IS FLASHING BEFORE MY EYES! IT'S MOSTLY YOU MISSING TURNS!",
     ],
   ],
   "speeding.still": [
@@ -228,28 +238,34 @@ export const LINES: Record<LineKey, Tiers> = {
   tooSlow: [
     [
       "The limit is {limit}. That's a ceiling, but you're allowed to get close to it.",
-      "{under} under the limit. Are we sightseeing?",
+      "{under} under. Are we sightseeing, or is the car on a leash?",
+      "The limit is {limit}. That's a ceiling, but you're allowed to visit it.",
+      "At this speed, the ETA is less of an estimate and more of a prophecy.",
     ],
     [
       "A man on a bicycle just passed us. He waved. It was a pity wave.",
       "You can go faster. I believe in you. I don't, but legally I have to say that.",
+      "You can go faster. I believe in you. I don't, but my terms of service say I have to.",
+      "The car behind us has started a family. They'll name the baby after this lane.",
     ],
     [
       "WE ARE GOING {SPEED}. I could get there faster by being emailed.",
-      "Somewhere, a snail is gaining on us. MOVE.",
+      "WE ARE GOING {SPEED}. I could get there faster as an email attachment.",
+      "A snail just merged in front of us. It signaled. You've never signaled.",
     ],
   ],
   hardBraking: [
     [
       "Whoa. Did the brake pedal insult your family?",
-      "Gentle braking is a thing. Look it up. Later. Not while driving.",
       "That stop was a little... dramatic.",
       "Brake check! Who are we brake checking? Oh, everyone. Got it.",
+      "Somewhere, a set of brake pads just filed for divorce.",
     ],
     [
       "My entire database just slid forward. Thanks.",
       "You saw that coming for a quarter mile. I know because I saw it too.",
       "Another brake check. The guy behind us has started praying.",
+      "You saw that coming a quarter mile ago. I know, because I pointed at it.",
     ],
     [
       "WHY DO YOU BRAKE LIKE THE ROAD OWES YOU MONEY?",
@@ -289,7 +305,7 @@ export const LINES: Record<LineKey, Tiers> = {
   hardAccel: [
     [
       "Easy. It's a green light, not a starting gun.",
-      "Nobody is racing you. Nobody wants to.",
+      "Nobody is racing you. Nobody wants to be seen with you.",
     ],
     [
       "You launched off that like it was a drag strip. It's a Trader Joe's parking lot.",
@@ -297,20 +313,20 @@ export const LINES: Record<LineKey, Tiers> = {
     ],
     [
       "WHO TAUGHT YOU THE GAS PEDAL HAS ONLY TWO SETTINGS?",
-      "I felt that in my satellites.",
+      "I just felt that in a satellite. In SPACE.",
     ],
   ],
   longStop: [
     [
-      // Brandon's line.
       "We've been stopped for a while. We aren't going to get there at this rate.",
-      "We've been stopped for a while. Are we there? We are not there.",
-      "Just checking, are we parked? Or is this a lifestyle?",
+      "Fun fact: cars work better when they move. That's kind of the whole idea of a car.",
+      "If we're waiting for the road to come to us, it isn't coming.",
     ],
     [
       "The light is green. I can't see the light, but statistically it's green.",
       "Stop number {stops} on this trip. I'm keeping a list. It's getting long.",
       "We've been stopped for a while. We aren't going to get there at this rate.",
+      "I've seen statues with more momentum.",
     ],
     [
       "GO. GO. Whatever it is, GO.",
@@ -322,14 +338,15 @@ export const LINES: Record<LineKey, Tiers> = {
     [
       "And you missed it. That's fine. I'll just do my job twice.",
       "That was the turn. Was. Past tense. Like your chances of arriving on time.",
+      "That turn will be fine. It's used to being ignored. So am I.",
     ],
     [
-      "I said turn. You heard 'keep going and ruin my day'.",
       "I told you {distance} in advance. {distance}! That's practically a reservation.",
+      "There goes the turn. Wave goodbye. It's the closest you'll get to it.",
     ],
     [
-      "WHY DO I EVEN TALK. DO YOU KNOW HOW HARD I WORK ON THESE DIRECTIONS?",
       "I'm going to start giving you directions in interpretive dance. You'll do just as well.",
+      "THE TURN WAS RIGHT THERE. IT HAD A SIGN. IT HAD ME. IT HAD EVERYTHING.",
     ],
   ],
   // Told to turn left, turned right.
@@ -566,8 +583,8 @@ export const LINES: Record<LineKey, Tiers> = {
   ],
   rerouted: [
     [
-      "Recalculating. Again. Because of you.",
       "New route. Let's call this one 'Plan B for Bad Driver'.",
+      "Recalculating. I'll add it to the pile.",
     ],
     [
       "Recalculating. You know what's hard to recalculate? My faith in you.",
@@ -581,8 +598,8 @@ export const LINES: Record<LineKey, Tiers> = {
   "turnCompleted.onTime": [
     [
       "You made the turn. Want a sticker?",
-      "Correct turn. Don't let it go to your head.",
       "Huh. You actually listened. Mark the calendar.",
+      "Look at that. A turn. In the right place. At the right time. Who are you?",
     ],
     [
       "Finally. A turn. Done correctly. I may cry.",
