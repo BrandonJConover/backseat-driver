@@ -436,14 +436,31 @@ export const LINES: Record<LineKey, Tiers> = {
     ["COFFEE?! YOU WANT TO BE MORE JITTERY?! {SAID}", "A shot of espresso won't fix your sense of direction! {SAID}"],
   ],
   "unplannedStop.store": [
-    ["Shopping. In the middle of a route. {said}", "We're at {name}. This is not where I sent you. {said}"],
-    ["While you're in there, see if they sell a sense of direction. {said}", "We're stopping at {name}? {said}"],
-    ["THIS IS NOT THE DESTINATION. THIS IS {NAME}. {SAID}", "SHOPPING?! {SAID}"],
+    [
+      "We're at {name}. This is not where I sent you. {said}",
+    ],
+    [
+      "While you're in there, see if they sell a sense of direction. {said}",
+      "{name}. Sure. I'll just wait here, rethinking my career. {said}",
+    ],
+    [
+      "THIS IS NOT THE DESTINATION. THIS IS {NAME}. {SAID}",
+      "YOU CAN'T BUY A BETTER ROUTE AT {NAME}! I CHECKED! {SAID}",
+    ],
   ],
   "unplannedStop.other": [
-    ["Why are we stopping here? {said}", "This isn't the destination. I'd know. It's my whole job. {said}"],
-    ["We've stopped. Somewhere random. {said}", "Are we just... parking? Here? {said}"],
-    ["WHY ARE WE HERE. WHERE IS HERE. {SAID}", "THIS IS NOT IT. {SAID}"],
+    [
+      "Why are we stopping here? {said}",
+      "This isn't the destination. I'd know. It's my whole job. {said}",
+      "Interesting place to stop. Interesting in the bad way. {said}",
+    ],
+    [
+      "Are we just... parking? Here? {said}",
+      "Is this a stop, or are you having a moment? Either way, {said}",
+    ],
+    [
+      "WHY ARE WE HERE. WHERE IS HERE. {SAID}",
+    ],
   ],
   // Reported hazards ahead. {distance} like "half a mile" / "500 feet".
   "hazard.police": [
@@ -494,9 +511,16 @@ export const LINES: Record<LineKey, Tiers> = {
     ],
   ],
   broughtAlong: [
-    ["Thanks for bringing me in. Didn't help your driving, but it was nice.", "Back in the car. I saw the inside of that place. Still not the destination."],
-    ["You brought me with you. Should have brought your sense of direction too.", "Okay, we're back. Let's try following directions this time. Wild idea."],
-    ["WE'RE BACK. DID THEY SELL YOU A SENSE OF DIRECTION IN THERE? NO? GREAT.", "BACK IN THE CAR. DIRECTIONS. REMEMBER THOSE?"],
+    [
+      "Thanks for bringing me in. Didn't help your driving, but it was nice.",
+      "I enjoyed that little walk. My first time outside the cupholder in weeks.",
+    ],
+    [
+      "You brought me with you. Should have brought your sense of direction too.",
+    ],
+    [
+      "WE'RE BACK. DID THEY SELL YOU A SENSE OF DIRECTION IN THERE? NO? GREAT.",
+    ],
   ],
   // Phone battery. {percent} like "15 percent".
   "battery.low": [
@@ -521,14 +545,35 @@ export const LINES: Record<LineKey, Tiers> = {
   ],
   // Moving with no destination set. Ends with a nudge to say one (Whisper is listening).
   noDestination: [
-    ["I see we're driving, but you didn't tell me where we're going. Typical.", "We're moving. To where? I'm a GPS. Destinations are kind of my whole thing."],
-    ["Still no destination. Are we just driving around? Like a screensaver?", "You know I can't judge your route if you don't have one. Well, I can. I'm judging it now."],
-    ["WHERE ARE WE GOING?! SAY IT! SAY A PLACE! ANY PLACE!", "I HAVE NO DESTINATION AND I MUST NAVIGATE."],
+    [
+      "I see we're driving, but you didn't tell me where we're going. Typical.",
+      "We're moving. To where? I'm a GPS. Destinations are kind of my whole thing.",
+      "Driving with no destination. Very freeing. For you. I'm a GPS, so this is my nightmare.",
+    ],
+    [
+      "Still no destination. Are we just driving around? Like a screensaver?",
+      "You know I can't judge your route if you don't have one. Well, I can. I'm judging it now.",
+      "Just tell me where we're going. I promise to only judge you a normal amount.",
+    ],
+    [
+      "WHERE ARE WE GOING?! SAY IT! SAY A PLACE! ANY PLACE!",
+      "I HAVE NO DESTINATION AND I MUST NAVIGATE.",
+    ],
   ],
   destinationSet: [
-    ["{name}. Finally. Was that so hard?", "{name}. Okay. Let's see how you mess this one up."],
-    ["Oh, NOW you tell me. {name}. Great.", "{name}. You could have said that before we left the driveway."],
-    ["{NAME}! THANK YOU! WAS THAT SO HARD?!", "{NAME}. FINALLY. I WAS ABOUT TO PICK FOR YOU."],
+    [
+      "{name}. Finally. Was that so hard?",
+      "{name}. Okay. Let's see how you mess this one up.",
+      "{name}. Great. I already have notes.",
+    ],
+    [
+      "Oh, NOW you tell me. {name}. Great.",
+      "{name}. You could have said that before we left the driveway.",
+    ],
+    [
+      "{NAME}! THANK YOU! WAS THAT SO HARD?!",
+      "{NAME}. FINALLY. I WAS ABOUT TO PICK FOR YOU.",
+    ],
   ],
   // The GPS asks to make a stop of its own. {name} is the place.
   "stopRequest.electronics": [
@@ -612,13 +657,15 @@ export const LINES: Record<LineKey, Tiers> = {
   "turnCompleted.late": [
     [
       "You made it. Barely. The curb will remember you.",
-      "Technically a turn. Technically.",
+      "That counts. The tires had to talk about it first, but it counts.",
     ],
     [
       "That was less of a turn and more of a last-minute life decision.",
+      "You made it. The car behind us did not enjoy the suspense.",
     ],
     [
       "WAS THAT A TURN OR A HOSTAGE SITUATION?",
+      "YOU TURNED SO LATE THE TURN HAD ALREADY GIVEN UP ON YOU.",
     ],
   ],
   "instruction.prefix": [
@@ -1541,14 +1588,18 @@ export const LINES: Record<LineKey, Tiers> = {
     [
       "You have arrived. Against all odds. Trip grade: {grade}.",
       "We're here. I'd say it was a pleasure, but I'm programmed not to lie. Grade: {grade}.",
+      "You have arrived. I'd clap, but I'm a phone. Grade: {grade}.",
+      "Destination reached. Somehow. I'll be studying this trip for years. Grade: {grade}.",
     ],
     [
       "Destination reached. I need a minute. Maybe a factory reset. Grade: {grade}.",
       "We made it, no thanks to you. Your grade is {grade}, which is generous.",
+      "You have arrived. Your grade is {grade}. I graded on a curve. The curve was you.",
     ],
     [
       "WE'RE HERE. GET OUT. I mean, have a nice day. Grade: {grade}. GET OUT.",
       "Arrived. I'm going to go lie down in the glovebox. Your grade is {grade}. Think about it.",
+      "WE MADE IT. I DON'T KNOW HOW. NEITHER DO YOU. GRADE: {GRADE}.",
     ],
   ],
 };
