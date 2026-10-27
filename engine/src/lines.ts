@@ -145,6 +145,7 @@ export type LineKey =
   | "ask.guess"
   | "ask.guessYes"
   | "ask.stayPut"
+  | "pronouns.corrected"
   | "place.farState"
   | "routine.elsewhere"
   | "routine.offDay"
@@ -1427,6 +1428,12 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Called it. {usual} it is.", "Predictable. I like that in a driver. It's the only thing I like. {usual} it is."],
     ["Of course it is. {usual}."],
     ["OBVIOUSLY. {usual}."],
+  ],
+  // It guessed the driver's pronouns from their name and got corrected. Brandon's line.
+  "pronouns.corrected": [
+    ["Oh, I'm sorry. How was I supposed to know? It's not like you told me or anything. Sheesh."],
+    ["Oh, I'm sorry. How was I supposed to know? It's not like you told me or anything. Sheesh."],
+    ["Oh, I'm SORRY. How was I supposed to know? It's not like you told me or anything. Sheesh."],
   ],
   // Asked where to, no answer, and the car hasn't moved. Brandon's line.
   "ask.stayPut": [
