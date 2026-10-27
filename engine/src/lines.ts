@@ -141,6 +141,10 @@ export type LineKey =
   | "setup.whereTo"
   | "name.wrong"
   | "dest.whichState"
+  | "ask.whereTo"
+  | "ask.guess"
+  | "ask.guessYes"
+  | "ask.stayPut"
   | "place.farState"
   | "routine.elsewhere"
   | "routine.offDay"
@@ -298,16 +302,20 @@ export const LINES: Record<LineKey, Tiers> = {
   ],
   longStop: [
     [
+      // Brandon's line.
+      "We've been stopped for a while. We aren't going to get there at this rate.",
       "We've been stopped for a while. Are we there? We are not there.",
       "Just checking, are we parked? Or is this a lifestyle?",
     ],
     [
       "The light is green. I can't see the light, but statistically it's green.",
       "Stop number {stops} on this trip. I'm keeping a list. It's getting long.",
+      "We've been stopped for a while. We aren't going to get there at this rate.",
     ],
     [
       "GO. GO. Whatever it is, GO.",
       "I've aged three software versions waiting for you.",
+      "We've been stopped for a WHILE. We aren't going to get there at this rate.",
     ],
   ],
   missedTurn: [
@@ -1313,6 +1321,54 @@ export const LINES: Record<LineKey, Tiers> = {
     ["Okay {wrong}, where are we headed?"],
     ["Okay {wrong}, where are we headed?"],
     ["Okay {wrong}, where are we headed?"],
+  ],
+  // Said when the app opens, so the driver can say where to instead of typing.
+  "ask.whereTo": [
+    [
+      "Oh. It's you. Where are we going?",
+      "Where to? And please, use your words. Typing while driving is how I lose drivers.",
+      "Back again. Where are we headed this time?",
+      "Alright, where are we going? Say it nicely.",
+      "I'm listening. Unfortunately. Where to?",
+      "Let me guess, you need directions. Where to?",
+    ],
+    [
+      "Where are we going? Somewhere close, I hope.",
+      "Where to? Make it somewhere you can't get lost. If that exists.",
+      "Fine. Where are we headed?",
+    ],
+    [
+      "WHERE ARE WE GOING. Just say it.",
+      "Where to. And no detours.",
+      "Oh good, you're back. Where to?",
+    ],
+  ],
+  // The app opens at a time the GPS knows the routine for: it guesses. {usual} e.g. "work".
+  "ask.guess": [
+    [
+      "It's {day} {daypart}. {usual}, I assume? Or are we breaking the routine today?",
+      "Let me guess. {usual}? Say yes, or surprise me.",
+      "{usual} again? I could drive there myself by now. Well, if I had wheels.",
+    ],
+    [
+      "{usual}, right? It's always {usual} on a {day} {daypart}.",
+      "Let me guess. {usual}. Again.",
+    ],
+    [
+      "{USUAL}? It's {day}. It's ALWAYS {usual}.",
+      "{usual}. Say yes. Let's get this over with.",
+    ],
+  ],
+  "ask.guessYes": [
+    ["Called it. {usual} it is.", "Predictable. I like that in a driver. It's the only thing I like. {usual} it is."],
+    ["Of course it is. {usual}."],
+    ["OBVIOUSLY. {usual}."],
+  ],
+  // Asked where to, no answer, and the car hasn't moved. Brandon's line.
+  "ask.stayPut": [
+    ["Deciding to play it safe today, huh? I guess that's probably for the best."],
+    ["Deciding to play it safe today, huh? I guess that's probably for the best."],
+    ["Deciding to play it safe today, huh? I guess that's probably for the best."],
   ],
   // Searching for a chain with no city: Brandon's line. {here} is the state we're in, {far} one
   // nowhere near it (from "place.farState").
